@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro Black Room</title>
+  <style>
+    body { background: #000; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    form { background: #111; padding: 2rem; border-radius: 10px; width: 100%; max-width: 400px; }
+    input, button { display: block; width: 100%; margin-bottom: 1rem; padding: 0.75rem; border: none; border-radius: 5px; }
+    input { background: #222; color: white; }
+    button { background: #0070f3; color: white; font-weight: bold; cursor: pointer; }
+    button:hover { background: #0051aa; }
+  </style>
+</head>
+<body>
+  <form id="registroForm">
+    <h2>Registro Black Room</h2>
+    <input type="text" name="nombre" placeholder="Nombre" required />
+    <input type="email" name="email" placeholder="Correo electrónico" required />
+    <input type="text" name="instagram" placeholder="@instagram (opcional)" />
+    <button type="submit">Registrarse</button>
+    <p id="mensaje"></p>
+  </form>
+
+  <script>
+    const form = document.getElementById('registroForm');
+    const mensaje = document.getElementById('mensaje');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      mensaje.textContent = 'Enviando...';
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      try {
+        const res = await fetch('/registro', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+          mensaje.textContent = result.message;
+          form.reset();
+        } else {
+          mensaje.textContent = result.error || 'Error desconocido';
+        }
+      } catch (err) {
+        mensaje.textContent = 'Error al conectar con el servidor';
+      }
+    });
+  </script>
+</body>
+</html>
